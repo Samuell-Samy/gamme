@@ -1,13 +1,22 @@
 {
-    "builds": [{
-      "src": "Thunder_Games/wsgi.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.11.3" }
-    }],
+    "builds": [
+        {
+            "src": "api/index.py",
+            "use": "@vercel/python",
+            "config": { "maxLambdaSize": "15mb", "runtime": "python3.11" }
+        }
+    ],
     "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "Thunder_Games/wsgi.py"
-      }
-    ]
+        {
+            "src": "/static/(.*)",
+            "dest": "/static/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "api/index.py"
+        }
+    ],
+    "env": {
+        "DJANGO_SETTINGS_MODULE": "Thunder_Games.settings"
+    }
 }

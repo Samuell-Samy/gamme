@@ -9,13 +9,41 @@ from django.db.models import Q
 import json
 from .models import Folder, Game
 
+def health_check(request):
+    """Health check endpoint to test if the app is working"""
+    try:
+        # Try to access the database
+        folder_count = Folder.objects.count()
+        game_count = Game.objects.count()
+        return JsonResponse({
+            "status": "healthy",
+            "database": "connected",
+            "folders": folder_count,
+            "games": game_count
+        })
+    except Exception as e:
+        return JsonResponse({
+            "status": "unhealthy",
+            "database": "disconnected",
+            "error": str(e)
+        }, status=500)
+
 def index(request):
-    return render(request, "index.html")
+    try:
+        return render(request, "index.html")
+    except Exception as e:
+        print(f"Error in index view: {e}")
+        return HttpResponse("Welcome to Event Games Hub", content_type="text/html")
 
 def home(request):
     """Home page view for regular users to browse games and folders"""
-    folders = Folder.objects.all().order_by("name")
-    return render(request, "home.html", {"folders": folders})
+    try:
+        folders = Folder.objects.all().order_by("name")
+        return render(request, "home.html", {"folders": folders})
+    except Exception as e:
+        # Log the error and return a safe response
+        print(f"Error in home view: {e}")
+        return render(request, "home.html", {"folders": [], "error": "Unable to load folders"})
 
 def game_detail(request, game_id: int):
     """Public game detail view for regular users"""
@@ -29,6 +57,11 @@ def game_detail(request, game_id: int):
     except Game.DoesNotExist:
         return render(request, 'game_detail.html', {
             'error': 'Game not found'
+        })
+    except Exception as e:
+        print(f"Error in game_detail view: {e}")
+        return render(request, 'game_detail.html', {
+            'error': 'Unable to load game details'
         })
 def login_page(request):
     if request.method == "POST":

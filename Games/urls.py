@@ -6,6 +6,8 @@ urlpatterns = [
     path('home/', views.home, name='home'),
     path('game/<int:game_id>/', views.game_detail, name='game_detail'),
     path('login/', views.login_page, name='login'),
+    # Health check endpoint
+    path('health/', views.health_check, name='health_check'),
     # Legacy support for direct .html routes
     path('login.html', views.login_page),
     path('index.html', views.index),

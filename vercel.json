@@ -23,6 +23,7 @@
       "DJANGO_SETTINGS_MODULE": "Thunder_Games.settings",
       "SECRET_KEY": "your-secret-key",
       "DEBUG": "False"
-    }
+    },
+    "buildCommand": "python manage.py collectstatic --noinput"
   }
   

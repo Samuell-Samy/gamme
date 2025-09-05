@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home - Games Portal</title>
+  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+</head>
+<body>
+  <div class="hero">
+    <div class="card">
+      <span class="logo">Games Portal</span>
+      <h1 class="title">Welcome to the Games Portal</h1>
+      <p class="subtitle">
+        Select a folder below to explore games or search for specific games.
+      </p>
+
+      <!-- Search Bar -->
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search games by name, description, or materials..." class="search-input">
+        <button id="clearSearch" class="clear-search-btn" style="display: none;">✕</button>
+      </div>
+
+      <div class="folders" id="folderContainer">
+        {% for folder in folders %}
+        <div class="folder" onclick="showGames({{ folder.id }})">{{ folder.name }}</div>
+        {% empty %}
+        <p style="text-align: center; color: var(--muted);">No folders available yet.</p>
+        {% endfor %}
+      </div>
+
+      <div class="games" id="gamesContainer"></div>
+    </div>
+  </div>
+
+  <!-- Modal removed - now using dedicated game detail pages -->
+
+  <script src="{% static 'js/home.js' %}"></script>
+</body>
+</html>

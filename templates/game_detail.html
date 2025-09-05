@@ -1,0 +1,239 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ game.name }} - Games Portal</title>
+  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+</head>
+<body>
+  <div class="hero">
+    <div class="card">
+      <!-- Header -->
+      <div class="game-header">
+        <a href="{% url 'home' %}" class="back-btn">← Back to Games</a>
+        <h1 class="title">{{ game.name }}</h1>
+      </div>
+
+      {% if error %}
+        <div class="error-message">
+          <h2>Game Not Found</h2>
+          <p>{{ error }}</p>
+          <a href="{% url 'home' %}" class="btn btn-primary">Return to Games</a>
+        </div>
+      {% else %}
+        <!-- Game Details -->
+        <div class="game-details">
+          <div class="detail-section">
+            <h3>📋 Game Information</h3>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <strong>Number of Players:</strong>
+                <span>{{ game.number_of_players }}</span>
+              </div>
+              <div class="detail-item">
+                <strong>Duration:</strong>
+                <span>{{ game.time }}</span>
+              </div>
+              <div class="detail-item">
+                <strong>Categories:</strong>
+                <span>
+                  {% if folders %}
+                    {% for folder in folders %}
+                      <span class="folder-tag">{{ folder.name }}</span>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    No categories assigned
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {% if game.materials %}
+          <div class="detail-section">
+            <h3>🎯 Materials Needed</h3>
+            <div class="materials-content">
+              {{ game.materials|linebreaks }}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if game.description %}
+          <div class="detail-section">
+            <h3>📖 Description</h3>
+            <div class="description-content">
+              {{ game.description|linebreaks }}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if game.video_link %}
+          <div class="detail-section">
+            <h3>🎥 Video Tutorial</h3>
+            <div class="video-section">
+              <a href="{{ game.video_link }}" target="_blank" class="btn btn-primary video-btn">
+                📺 Watch Video Tutorial
+              </a>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Action Buttons -->
+          <div class="game-actions">
+            <a href="{% url 'home' %}" class="btn btn-secondary">← Back to Games</a>
+            {% if game.video_link %}
+            <a href="{{ game.video_link }}" target="_blank" class="btn btn-primary">📺 Watch Video</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <style>
+    .game-header {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .back-btn {
+      display: inline-block;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 15px;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .back-btn:hover {
+      color: var(--accent-2);
+    }
+
+    .game-details {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .detail-section {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .detail-section h3 {
+      margin: 0 0 15px 0;
+      color: var(--accent);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .detail-item strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .detail-item span {
+      color: var(--muted);
+    }
+
+    .folder-tag {
+      background: var(--accent);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .materials-content,
+    .description-content {
+      color: var(--text);
+      line-height: 1.6;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 3px solid var(--accent);
+    }
+
+    .video-section {
+      text-align: center;
+    }
+
+    .video-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      padding: 12px 24px;
+    }
+
+    .game-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .error-message {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .error-message h2 {
+      color: #e74c3c;
+      margin-bottom: 15px;
+    }
+
+    .error-message p {
+      color: var(--muted);
+      margin-bottom: 25px;
+    }
+
+    @media (max-width: 768px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .game-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .game-actions .btn {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+  </style>
+</body>
+</html>

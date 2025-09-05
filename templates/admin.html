@@ -1,0 +1,343 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Games Portal</title>
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+</head>
+<body>
+  <div class="hero">
+    <div class="card">
+      <span class="logo">Games Portal (Admin)</span>
+      <h1 class="title">Admin Dashboard</h1>
+      <p class="subtitle">Manage games & folders below.</p>
+
+      <!-- Search Bar -->
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search games by name, description, or materials..." class="search-input">
+        <button id="clearSearch" class="clear-search-btn" style="display: none;">✕</button>
+      </div>
+
+      <!-- Folders -->
+      <div class="folders" id="folderContainer"></div>
+
+      <!-- Admin Actions -->
+      <div id="adminActions" class="admin-actions">
+        <a href="{% url 'admin_game_create' %}" class="btn btn-primary" style="text-decoration:none;">➕ Add Game</a>
+        <button onclick="addFolder()">📂 Add Folder</button>
+      </div>
+
+      <!-- Games -->
+      <div class="games" id="gamesContainer"></div>
+    </div>
+  </div>
+
+  <!-- View Modal -->
+  <div class="modal" id="gameModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle"></h2>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-row"><strong>Description:</strong> <div id="modalDesc"></div></div>
+        <div class="modal-row"><strong>Players:</strong> <span id="modalPlayers"></span></div>
+        <div class="modal-row"><strong>Time:</strong> <span id="modalTime"></span></div>
+        <div class="modal-row"><strong>Materials:</strong> <span id="modalMaterials"></span></div>
+        <div class="modal-row"><strong>Folders:</strong> <span id="modalFolders"></span></div>
+        <a id="modalLink" href="#" target="_blank" class="btn btn-primary" style="margin-top:10px; display:none;">Watch Video</a>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Game Modal -->
+  <div class="modal" id="gameFormModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="gameFormTitle">Add Game</h2>
+        <button class="modal-close" onclick="closeGameFormModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="gameForm" class="form-grid">
+          <div class="form-group">
+            <label for="gameName">Name</label>
+            <input type="text" id="gameName" required />
+          </div>
+          <div class="form-group">
+            <label for="gamePlayers">Number of Players</label>
+            <input type="text" id="gamePlayers" placeholder="e.g. 5-10 players" />
+          </div>
+          <div class="form-group">
+            <label for="gameTime">Time</label>
+            <input type="text" id="gameTime" placeholder="e.g. 30 minutes" />
+          </div>
+          <div class="form-group">
+            <label for="gameMaterials">Materials</label>
+            <textarea id="gameMaterials" placeholder="Optional"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="gameDesc">Description</label>
+            <textarea id="gameDesc"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="gameLink">Video Link</label>
+            <input type="url" id="gameLink" />
+          </div>
+          <div class="form-group">
+            <label for="gameFoldersSelect">Folders</label>
+            <select id="gameFoldersSelect" multiple size="6" class="select-multi"></select>
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn" onclick="closeGameFormModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal" id="confirmModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Confirm</h2>
+        <button class="modal-close" onclick="closeConfirmModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmMessage">Are you sure?</p>
+      </div>
+      <div class="modal-actions">
+        <button id="confirmYes" class="btn btn-primary">Yes</button>
+        <button class="btn" onclick="closeConfirmModal()">No</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Folder Modal -->
+  <div class="modal" id="folderFormModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Add Folder</h2>
+        <button class="modal-close" onclick="closeFolderFormModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="folderForm" class="form-grid">
+          <div class="form-group">
+            <label for="folderName">Folder Name</label>
+            <input type="text" id="folderName" required />
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn" onclick="closeFolderFormModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast" class="toast">Saved</div>
+
+  <script>
+    function getCookie(name){const value=`; ${document.cookie}`;const parts=value.split(`; ${name}=`);if(parts.length===2) return parts.pop().split(';').shift();}
+    const csrftoken=getCookie('csrftoken');
+
+    async function fetchJSON(url, options={}){
+      const opts={credentials:'same-origin', headers:{'Content-Type':'application/json','X-CSRFToken':csrftoken}, ...options};
+      const res=await fetch(url, opts);
+      if(!res.ok){throw new Error(await res.text());}
+      return res.json();
+    }
+
+    async function loadFolders(){
+      const data=await fetchJSON('{% url "api_folders" %}');
+      const container=document.getElementById('folderContainer');
+      container.innerHTML='';
+      window.folderIdToName = {};
+      data.forEach(f=>{
+        window.folderIdToName[f.id] = f.name;
+        const el=document.createElement('div');
+        el.className='folder';
+        el.textContent=f.name;
+        el.onclick=()=> showGames(f.id);
+        container.appendChild(el);
+      });
+    }
+
+    // Search functionality
+    let searchTimeout;
+    window.isSearchMode = false;
+
+    async function searchGames(query) {
+      if (!query.trim()) {
+        clearSearch();
+        return;
+      }
+
+      try {
+        window.isSearchMode = true;
+        document.getElementById('adminActions').style.display = 'none';
+        
+        const response = await fetchJSON(`{% url 'api_search_games' %}?q=${encodeURIComponent(query)}`);
+        const container = document.getElementById('gamesContainer');
+        container.innerHTML = '';
+
+        if (response.results.length === 0) {
+          container.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; color: var(--muted); padding: 40px;">
+              <h3>No games found</h3>
+              <p>No games match your search for "${query}"</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Show search results header
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; margin-bottom: 20px; color: var(--accent);">
+            <h3>Search Results (${response.count} found)</h3>
+            <p>Searching for: "${query}"</p>
+          </div>
+        `;
+
+        const detailBase = "{% url 'admin_game_detail' 0 %}";
+        response.results.forEach(g => {
+          const card = document.createElement('div');
+          card.className = 'game-card';
+          card.setAttribute('data-game-id', g.id);
+          card.innerHTML = `
+            <h3>${g.name}</h3>
+            <p><strong>Players:</strong> ${g.number_of_players}</p>
+            <p><strong>Time:</strong> ${g.time}</p>
+            <p><strong>Folders:</strong> ${g.folder_names.join(', ') || 'None'}</p>
+            <p>${g.description || ''}</p>
+            <a class="btn btn-primary view-btn" href="#">View</a>
+            <div class="admin-controls">
+              <button class="edit-btn" onclick="editGame(${g.id})">✏️ Edit</button>
+              <button class="delete-btn" onclick="deleteGame(${g.id})">🗑️ Delete</button>
+            </div>
+          `;
+          container.appendChild(card);
+          const viewBtn = card.querySelector('.view-btn');
+          if (viewBtn) {
+            viewBtn.href = detailBase.replace('/0/', '/' + g.id + '/');
+          }
+        });
+
+      } catch (e) {
+        console.error('Search error:', e);
+        const container = document.getElementById('gamesContainer');
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; color: #e74c3c; padding: 40px;">
+            <h3>Search Error</h3>
+            <p>Failed to search games. Please try again.</p>
+          </div>
+        `;
+      }
+    }
+
+    function clearSearch() {
+      window.isSearchMode = false;
+      document.getElementById('searchInput').value = '';
+      document.getElementById('clearSearch').style.display = 'none';
+      document.getElementById('gamesContainer').innerHTML = '';
+      document.getElementById('adminActions').style.display = 'block';
+    }
+
+    function handleSearchInput() {
+      const query = document.getElementById('searchInput').value.trim();
+      const clearBtn = document.getElementById('clearSearch');
+      
+      if (query) {
+        clearBtn.style.display = 'block';
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => searchGames(query), 300); // Debounce search
+      } else {
+        clearBtn.style.display = 'none';
+        clearSearch();
+      }
+    }
+
+    async function showGames(folderId){
+      // Clear search mode when showing folder games
+      window.isSearchMode = false;
+      document.getElementById('searchInput').value = '';
+      document.getElementById('clearSearch').style.display = 'none';
+      
+      window.currentFolder=folderId; // expose for admin.js
+      document.getElementById('adminActions').style.display='block';
+      const games=await fetchJSON(`{% url 'api_folder_games' 0 %}`.replace('/0/','/'+folderId+'/'));
+      const container=document.getElementById('gamesContainer');
+      container.innerHTML='';
+      const detailBase = "{% url 'admin_game_detail' 0 %}";
+      if(games.length===0){
+        container.innerHTML = `<p style="grid-column:1/-1; text-align:center; color: var(--muted);">No games available yet.</p>`;
+        return;
+      }
+      games.forEach(g=>{
+        const card=document.createElement('div');
+        card.className='game-card';
+        card.setAttribute('data-game-id', g.id);
+        card.innerHTML=`
+          <h3>${g.name}</h3>
+          <p><strong>Players:</strong> ${g.number_of_players}</p>
+          <p><strong>Time:</strong> ${g.time}</p>
+          <p>${g.description||''}</p>
+          <a class="btn btn-primary view-btn" href="#">View</a>
+          <div class="admin-controls">
+            <button class="edit-btn" onclick="editGame(${g.id})">✏️ Edit</button>
+            <button class="delete-btn" onclick="deleteGame(${g.id})">🗑️ Delete</button>
+          </div>`;
+        container.appendChild(card);
+        const viewBtn = card.querySelector('.view-btn');
+        if (viewBtn) {
+          viewBtn.href = detailBase.replace('/0/', '/' + g.id + '/');
+        }
+      });
+    }
+    async function openGameDetail(gameId){
+      try{
+        const g = await fetchJSON(`/api/games/${gameId}/`);
+        document.getElementById('modalTitle').textContent = g.name || '';
+        document.getElementById('modalDesc').textContent = g.description || '';
+        document.getElementById('modalPlayers').textContent = g.number_of_players || '—';
+        document.getElementById('modalTime').textContent = g.time || '—';
+        document.getElementById('modalMaterials').textContent = g.materials || '—';
+        const folderNames = (g.folder_ids||[]).map(id => (window.folderIdToName && window.folderIdToName[id]) || `#${id}`);
+        document.getElementById('modalFolders').textContent = folderNames.join(', ') || '—';
+        const linkEl = document.getElementById('modalLink');
+        if (g.video_link) { linkEl.href = g.video_link; linkEl.style.display = 'inline-block'; } else { linkEl.style.display = 'none'; }
+        document.getElementById('gameModal').style.display = 'flex';
+      } catch(e){ console.error(e); }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      loadFolders();
+      
+      // Add search event listeners
+      const searchInput = document.getElementById('searchInput');
+      const clearSearchBtn = document.getElementById('clearSearch');
+      
+      if (searchInput) {
+        searchInput.addEventListener('input', handleSearchInput);
+        searchInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') {
+            clearSearch();
+          }
+        });
+      }
+      
+      if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', clearSearch);
+      }
+    });
+  </script>
+  <script src="{% static 'js/admin.js' %}"></script>
+</body>
+</html>

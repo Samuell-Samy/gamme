@@ -1,0 +1,56 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Event Games Hub — Welcome</title>
+  <meta name="description" content="Quick, fun, age-appropriate games for teams & events." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+</head>
+
+<body>
+  <div class="hero">
+    <!-- Decorative background blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="lightning"></div>
+
+
+    <!-- Floating game chips -->
+    <ul class="chips">
+  <li>⚡</li>
+  <li>🌩️</li>
+  <li>⚡</li>
+  <li>☁️</li>
+</ul>
+
+
+    <main class="card" role="main">
+      <div class="logo">Event Games Hub</div>
+      <h1 class="title">Welcome To Thunder!</h1>
+      <p class="subtitle">
+        Find your games for any event Here .
+      </p>
+
+      <div class="actions">
+        <a class="btn btn-primary" href="{% url 'home' %}" aria-label="Go to homepage">HomePage</a>
+        <a class="admin-link" href="{% url 'login' %}" aria-label="Admins only login">(Admins Only!)</a>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <small>© <span id="year"></span> Event Games Hub</small>
+    </footer>
+  </div>
+
+  <script>
+    // Set current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Add Game — Admin</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+</head>
+<body>
+  <div class="hero">
+    <div class="card" style="max-width: 760px; width: min(92vw, 760px); text-align:left;">
+      <span class="logo">Games Portal</span>
+      <h1 class="title">Add Game</h1>
+      {% if error %}
+        <div class="alert error">{{ error }}</div>
+      {% endif %}
+      <form action="" method="post" class="form-grid">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" value="{{ form.name|default:'' }}" required />
+        </div>
+        <div class="form-group">
+          <label for="number_of_players">Number of Players</label>
+          <input type="text" id="number_of_players" name="number_of_players" value="{{ form.number_of_players|default:'' }}" placeholder="e.g. 5-10 players" />
+        </div>
+        <div class="form-group">
+          <label for="time">Time</label>
+          <input type="text" id="time" name="time" value="{{ form.time|default:'' }}" placeholder="e.g. 30 minutes" />
+        </div>
+        <div class="form-group">
+          <label for="materials">Materials</label>
+          <textarea id="materials" name="materials">{{ form.materials|default:'' }}</textarea>
+        </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" name="description">{{ form.description|default:'' }}</textarea>
+        </div>
+        <div class="form-group">
+          <label for="video_link">Video Link (optional)</label>
+          <input type="url" id="video_link" name="video_link" value="{{ form.video_link|default:'' }}" />
+        </div>
+        <div class="form-group" style="grid-column: span 2;">
+          <label for="folder_ids">Folders</label>
+          <select id="folder_ids" name="folder_ids" multiple size="6" class="select-multi" style="width:100%">
+            {% for f in folders %}
+              <option value="{{ f.id }}" {% if form.folder_ids and f.id|stringformat:'s' in form.folder_ids %}selected{% endif %}>{{ f.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="modal-actions" style="grid-column: span 2;">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <a href="{% url 'admin_panel' %}" class="btn" style="text-decoration:none;">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
+
+

@@ -1,0 +1,43 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ game.name }} — Details</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+</head>
+<body>
+  <div class="hero">
+    <div class="card" style="max-width: 760px; width: min(92vw, 760px); text-align:left;">
+      <span class="logo">Games Portal</span>
+      <h1 class="title">{{ game.name }}</h1>
+      <p class="subtitle">Detailed view</p>
+
+      <div class="modal-row"><strong>Description:</strong> <div>{{ game.description|default:'—' }}</div></div>
+      <div class="modal-row"><strong>Players:</strong> <span>{{ game.number_of_players|default:'—' }}</span></div>
+      <div class="modal-row"><strong>Time:</strong> <span>{{ game.time|default:'—' }}</span></div>
+      <div class="modal-row"><strong>Materials:</strong> <span>{{ game.materials|default:'—' }}</span></div>
+      <div class="modal-row"><strong>Folders:</strong>
+        <span>
+          {% if folders %}
+            {% for f in folders %}{{ f.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          {% else %}—{% endif %}
+        </span>
+      </div>
+      {% if game.video_link %}
+        <a class="btn btn-primary" href="{{ game.video_link }}" target="_blank" style="margin-top:10px;">Watch Video</a>
+      {% endif %}
+
+      <div class="modal-actions" style="margin-top: 16px;">
+        <a href="{% url 'admin_panel' %}" class="btn">Back</a>
+        <a href="{% url 'admin_game_create' %}" class="btn btn-primary">Add New Game</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+

@@ -1,0 +1,265 @@
+:root{
+  --bg: #0a0c16;
+  --card: rgba(255,255,255,0.06);
+  --card-border: rgba(255,255,255,0.12);
+  --text: #eaf2ff;
+  --muted: #9aa6c8;
+  --accent: #ffe600;  /* ⚡ electric yellow */
+  --accent-2: #00cfff; /* stormy blue */
+  --accent-3: #ff0077; /* optional thunder pink for depth */
+  --shadow: 0 10px 35px rgba(0,0,0,0.55);
+}
+
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:var(--text);
+  background: radial-gradient(1200px 800px at 20% -10%, #192642 0%, rgba(25,38,66,0) 60%),
+              radial-gradient(1000px 700px at 120% 120%, #1a294d 0%, rgba(26,41,77,0) 60%),
+              var(--bg);
+}
+
+/* ====== HERO WRAPPER ====== */
+.hero{
+  position:relative;
+  min-height:100%;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  padding:48px 20px 32px;
+}
+
+/* Soft colorful blobs */
+.blob{
+  position:absolute;
+  filter: blur(60px);
+  opacity:.55;
+  border-radius:50%;
+  pointer-events:none;
+  animation: float 18s ease-in-out infinite;
+}
+.blob-1{
+  background: radial-gradient(circle at 30% 30%, var(--accent) 0%, transparent 65%);
+}
+.blob-2{
+  background: radial-gradient(circle at 60% 40%, var(--accent-2) 0%, transparent 65%);
+}
+.blob-3{
+  background: radial-gradient(circle at 40% 60%, var(--accent-3) 0%, transparent 65%);
+}
+
+@keyframes float{
+  0%,100%{ transform: translateY(0) translateX(0) scale(1); }
+  50%{ transform: translateY(-12px) translateX(8px) scale(1.02); }
+}
+
+/* Floating emoji chips (fun, subtle) */
+.chips{
+  list-style:none; margin:0; padding:0;
+  position:absolute; inset:0; pointer-events:none;
+}
+.chips li{
+  position:absolute;
+  font-size:28px; opacity:.22; filter: grayscale(10%) drop-shadow(0 6px 12px rgba(0,0,0,.35));
+  animation: drift 16s ease-in-out infinite;
+}
+.chips li:nth-child(1){ top:14%; left:12%; animation-delay:0s }
+.chips li:nth-child(2){ top:12%; right:16%; animation-delay:3s }
+.chips li:nth-child(3){ bottom:18%; left:18%; animation-delay:6s }
+.chips li:nth-child(4){ bottom:22%; right:14%; animation-delay:9s }
+.chips li:nth-child(5){ top:45%; left:6%; animation-delay:12s }
+.chips li:nth-child(6){ top:58%; right:8%; animation-delay:15s }
+@keyframes drift{
+  0%,100%{ transform: translateY(0) }
+  50%{ transform: translateY(-10px) }
+}
+
+/* ====== CARD ====== */
+.card{
+  position:relative;
+  width:min(720px, 92vw);
+  padding:40px 28px 28px;
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+  border:1px solid var(--card-border);
+  border-radius:28px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  text-align:center;
+}
+
+.logo{
+  display:inline-block;
+  font-weight:800;
+  letter-spacing:.5px;
+  padding:10px 16px;
+  border-radius:999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color:#0b1020;
+  text-transform:uppercase;
+  font-size:14px;
+}
+
+.title{
+  margin:18px 0 6px;
+  font-size: clamp(28px, 6vw, 44px);
+  line-height:1.05;
+  letter-spacing:-0.02em;
+}
+
+.subtitle{
+  margin: 0 auto 26px;
+  max-width: 50ch;
+  font-size: clamp(14px, 2.7vw, 18px);
+  color: var(--muted);
+}
+.highlight{
+  color:#fff; font-weight:600;
+  text-decoration: underline;
+  text-decoration-color: rgba(124,108,255,.45);
+  text-underline-offset: 3px;
+}
+
+/* ====== ACTIONS ====== */
+.actions{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  margin: 10px 0 8px;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-width: 220px;
+  padding:14px 18px;
+  border-radius:14px;
+  text-decoration:none;
+  font-weight:600;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  outline-offset: 3px;
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 8px 20px rgba(0,0,0,.35);
+}
+.btn-primary{
+  background: linear-gradient(180deg, #ffffff, #d9e1ff);
+  color:#171a2b;
+}
+.btn-primary:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(0,0,0,.45);
+}
+.btn-primary:active{
+  transform: translateY(0);
+  box-shadow: 0 8px 20px rgba(0,0,0,.35);
+}
+
+.admin-link{
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  opacity:.9;
+  transition: opacity .15s ease, color .15s ease;
+}
+.admin-link:hover{
+  opacity:1; color:#d2dbff;
+}
+
+/* Small helper text */
+.mini-note{
+  margin-top: 14px;
+  font-size: 12px;
+  letter-spacing:.2px;
+  color: #b8c4dc;
+  opacity:.85;
+}
+
+/* Footer */
+.footer{
+  position:absolute;
+  bottom:10px; left:0; right:0;
+  display:flex; justify-content:center;
+  color: #9fb0cf;
+  font-size:12px;
+  opacity:.7;
+}
+
+/* Mobile tweaks */
+@media (max-width: 520px){
+  .card{ padding:32px 20px 22px }
+  .btn{ min-width: 70%; }
+  .chips li{ font-size:22px; }
+}
+/* ====== FORM STYLES ====== */
+.form{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  margin:22px 0 28px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:6px;
+}
+
+.field label{
+  font-size:14px;
+  font-weight:600;
+  color:#dbe4ff;
+}
+
+.field input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.07);
+  color:#fff;
+  font-size:15px;
+  outline:none;
+  transition:border .15s ease, background .15s ease;
+}
+
+.field input:focus{
+  border-color: var(--accent-2);
+  background: rgba(255,255,255,.12);
+}
+@keyframes lightning-flash {
+  0%, 85%, 100% { opacity: 0; }
+  5% { opacity: 1; }
+  6% { opacity: 0.6; }
+  7% { opacity: 1; }
+  8%, 20% { opacity: 0.2; } /* faint afterglow */
+  21%, 60% { opacity: 0; }
+  61% { opacity: 1; }
+  62%, 70% { opacity: 0.3; }
+  71%, 84% { opacity: 0; }
+}
+
+.lightning {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 120px;
+  height: 320px;
+  background: var(--accent);
+  clip-path: polygon(
+    40% 0%, 55% 20%, 30% 20%, 65% 50%, 
+    40% 50%, 70% 80%, 45% 80%, 60% 100%, 
+    20% 65%, 45% 65%, 15% 35%, 40% 35%
+  );
+  filter: drop-shadow(0 0 20px var(--accent))
+          drop-shadow(0 0 40px var(--accent));
+  transform: translateX(-50%);
+  opacity: 0;
+  animation: lightning-flash 1s infinite ease-in-out;
+}

@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Home - Games Portal</title>
+
+  <!-- Shared Styles -->
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}" />
+</head>
+<body>
+  <div class="hero">
+  <div class="lightning"></div>
+    <div class="card">
+      <!-- Header -->
+      <span class="logo">🎮 Games Portal</span>
+      <h1 class="title">Admin Home</h1>
+      <p class="subtitle">
+        Games & Folders.
+      </p>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat-box">
+          <h2 id="folderCount">{{ folder_count }}</h2>
+          <p>Folders</p>
+        </div>
+        <div class="stat-box">
+          <h2 id="gameCount">{{ game_count }}</h2>
+          <p>Games</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <a href="{% url 'admin_panel' %}" class="btn btn-primary">⚙️ Go to Admin Panel</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Game Modal -->
+  <div class="modal" id="gameFormModal">
+    <div class="modal-content">
+      <h2 id="gameFormTitle">Add Game</h2>
+      <form id="gameForm">
+        <label>Title</label>
+        <input type="text" id="gameTitle" required />
+        <label>Age</label>
+        <input type="text" id="gameAge" />
+        <label>Description</label>
+        <textarea id="gameDesc"></textarea>
+        <label>Video Link</label>
+        <input type="url" id="gameLink" />
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <button type="submit">Save</button>
+          <button type="button" onclick="closeGameFormModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal" id="confirmModal">
+    <div class="modal-content">
+      <h2>Confirm</h2>
+      <p id="confirmMessage">Are you sure?</p>
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <button id="confirmYes">Yes</button>
+        <button onclick="closeConfirmModal()">No</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Folder Modal -->
+  <div class="modal" id="folderFormModal">
+    <div class="modal-content">
+      <h2>Add Folder</h2>
+      <form id="folderForm">
+        <label>Folder Name</label>
+        <input type="text" id="folderName" required />
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <button type="submit">Save</button>
+          <button type="button" onclick="closeFolderFormModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="{% static 'js/admin.js' %}"></script>
+</body>
+</html>
